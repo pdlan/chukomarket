@@ -1,0 +1,19 @@
+{% extends 'layout.html' %}
+{% block title %}{% endblock %}
+{% block body %}
+<div class="row">
+    <div class="offset-md-4 col-md-4">
+        <form action="/login" method="post">
+            <div class="form-group">
+                <input type="text" class="form-control" name="name" placeholder="姓名">
+            </div>
+            <div class="form-group">
+                <input type="text" class="form-control" name="phone" placeholder="手机号">
+            </div>
+            <div class="form-group">
+                <button type="submit">提交</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
