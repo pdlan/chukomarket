@@ -1,5 +1,5 @@
 {% extends 'layout.html' %}
-{% block title %}我的商品 | USTC二手市场{% endblock %}
+{% block title %}我的商品 | 闲蜗{% endblock %}
 {% block head %}
 <script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
 <script src="static/js/jquery-3.3.1.min.js"></script>
@@ -94,6 +94,18 @@
                         </div>
                     </div>
                     <div class="form-group row">
+                        <label class="col-md-2 col-form-label">描述</label>
+                        <div class="col-md-10">
+                            <textarea type="text" v-model="new_item.detail" class="form-control" placeholder="商品描述" rows="5" required></textarea>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-md-2 col-form-label">图片</label>
+                        <div class="col-md-10">
+                            <input ref="image_new" type="file" v-on:change="on_change_new_item_img" class="form-control" accept=".jpg,.jpeg,.gif,.png">
+                        </div>
+                    </div>
+                    <div class="form-group row">
                         <div class="offset-md-2 col-md-10">
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" v-model="new_item.sale_self" value="true" type="radio" id="new-sale-self-yes">
@@ -103,6 +115,9 @@
                                 <input class="form-check-input" v-model="new_item.sale_self" value="false" type="radio" id="new-sale-self-no">
                                 <label class="form-check-label" for="new-sale-self-no">学生会帮忙卖</label>
                             </div>
+                        </div>
+                        <div class="offset-md-2 col-md-10 alert alert-info" v-if="new_item.sale_self == 'false'">
+                            请于六月九日在11:30至12:30之间将商品送至3B102的工作人员处。
                         </div>
                     </div>
                     <div class="form-group row">
@@ -115,6 +130,10 @@
                                 <input class="form-check-input" type="radio" v-model="new_item.will_take_back" value="false" id="new-take-back-no">
                                 <label class="form-check-label" for="new-take-back-no">活动结束后不拿回物品</label>
                             </div>
+                        </div>
+                        <div class="offset-md-2 col-md-10 alert alert-info">
+                            <template v-if="new_item.will_take_back == 'true'">请于六月九日下午6:30来3B102取回您未卖出的物品。</template>
+                            <template v-else>您的物品若未卖出将会被捐赠或送出。</template>
                         </div>
                     </div>
                     <div class="form-group row">
@@ -171,6 +190,18 @@
                         </div>
                     </div>
                     <div class="form-group row">
+                        <label class="col-md-2 col-form-label">描述</label>
+                        <div class="col-md-10">
+                            <textarea type="text" v-model="edit_item.detail" class="form-control" placeholder="商品描述" rows="5" required></textarea>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-md-2 col-form-label">图片</label>
+                        <div class="col-md-10">
+                            <input ref="image_edit" type="file" v-on:change="on_change_edit_item_img" class="form-control" accept=".jpg,.jpeg,.gif,.png">
+                        </div>
+                    </div>
+                    <div class="form-group row">
                         <div class="offset-md-2 col-md-10">
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" v-model="edit_item.sale_self" value="true" type="radio" id="edit-sale-self-yes">
@@ -180,6 +211,9 @@
                                 <input class="form-check-input" v-model="edit_item.sale_self" value="false" type="radio" id="edit-sale-self-no">
                                 <label class="form-check-label" for="edit-sale-self-no">学生会帮忙卖</label>
                             </div>
+                        </div>
+                        <div class="offset-md-2 col-md-10 alert alert-info" v-if="edit_item.sale_self == 'false'">
+                            请于六月九日在11:30至12:30之间将商品送至3B102的工作人员处。
                         </div>
                     </div>
                     <div class="form-group row">
@@ -192,6 +226,10 @@
                                 <input class="form-check-input" type="radio" v-model="edit_item.will_take_back" value="false" id="edit-take-back-no">
                                 <label class="form-check-label" for="edit-take-back-no">活动结束后不拿回物品</label>
                             </div>
+                        </div>
+                        <div class="offset-md-2 col-md-10 alert alert-info">
+                            <template v-if="edit_item.will_take_back == 'true'">请于六月九日下午6:30来3B102取回您未卖出的物品。</template>
+                            <template v-else>您的物品若未卖出将会被捐赠或送出。</template>
                         </div>
                     </div>
                     <div class="form-group row">

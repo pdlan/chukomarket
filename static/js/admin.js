@@ -42,7 +42,30 @@ function checkout_submit() {
     return false;
 }
 
+function newadmin_submit() {
+    var id = $('#id-newadmin').val();
+    var post_data = {
+        id: parseInt(id),
+        action: 'newadmin'
+    };
+    $.ajax({
+        url : '/admin',
+        type : 'POST',
+        data : JSON.stringify(post_data),
+        dataType : 'json',
+        success: function (data) {
+            alert('添加成功');
+            $('#id-newadmin').val('');
+        },
+        error: function (xhr) {
+            alert('添加失败');
+        }
+    });
+    return false;
+}
+
 $(document).ready(function () {
     $('#form-recv').submit(recv_submit);
     $('#form-checkout').submit(checkout_submit);
+    $('#form-newadmin').submit(newadmin_submit);
 });

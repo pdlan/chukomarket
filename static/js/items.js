@@ -1,5 +1,10 @@
 var new_item = {
     name: '',
+    detail: '',
+    img: {
+        type: 'null',
+        data: ''
+    },
     price: '',
     type: '0',
     will_take_back: 'true',
@@ -11,6 +16,11 @@ var new_item = {
 
 var edit_item = {
     name: '',
+    detail: '',
+    img: {
+        type: 'null',
+        data: ''
+    },
     price: '',
     type: '0',
     will_take_back: 'true',
@@ -28,6 +38,8 @@ var delete_item = {
 function new_item_submit() {
     var post_data = {
         name : new_item.name,
+        detail: new_item.detail,
+        img: new_item.img,
         type : new_item.type,
         sale_self: new_item.sale_self == 'true',
         will_take_back : new_item.will_take_back == 'true',
@@ -44,6 +56,11 @@ function new_item_submit() {
             items.push(post_data);
             $('#modal-new-item').modal('hide');
             new_item.name = '';
+            new_item.detail = '';
+            new_item.img = {
+                type: 'null',
+                data: ''
+            };
             new_item.price = '';
             new_item.type = '0';
             new_item.will_take_back = 'true';
@@ -65,6 +82,8 @@ function edit_item_submit() {
     var post_data = {
         name: edit_item.name,
         type: edit_item.type,
+        detail: edit_item.detail,
+        img: edit_item.img,
         sale_self: edit_item.sale_self == 'true',
         will_take_back: edit_item.will_take_back == 'true',
         price: edit_item.price
@@ -81,6 +100,7 @@ function edit_item_submit() {
             for (var i = 0; i < items.length; ++i) {
                 if (items[i].id === edit_item.id) {
                     items[i].name = edit_item.name;
+                    items[i].detail = edit_item.detail;
                     items[i].price = edit_item.price;
                     items[i].type = edit_item.type;
                     items[i].will_take_back = edit_item.will_take_back;
@@ -129,6 +149,11 @@ function on_click_edit(id) {
         if (items[i].id === id) {
             edit_item.id = id;
             edit_item.name = items[i].name;
+            edit_item.detail = items[i].detail;
+            edit_item.img = {
+                type: 'null',
+                data: ''
+            };
             edit_item.price = items[i].price;
             edit_item.type = items[i].type;
             edit_item.will_take_back = items[i].will_take_back;
@@ -144,6 +169,50 @@ function on_click_delete(id) {
     $('#modal-delete-item').modal('show');
 }
 
+function on_change_new_item_img() {
+    var file = this.$refs.image_new.files[0];
+    var reader = new FileReader();
+    var types = {
+        'image/jpeg': 'jpg',
+        'image/gif': 'gif',
+        'image/png': 'png'
+    }
+    var type = types[file.type];
+    if (!type) {
+        alert('请选择图片！');
+        return;
+    }
+    reader.readAsDataURL(file);
+    reader.onload = function () {
+        new_item.img = {
+            type: type,
+            data: reader.result.split(',')[1]
+        };
+    }
+}
+
+function on_change_edit_item_img() {
+    var file = this.$refs.image_edit.files[0];
+    var reader = new FileReader();
+    var types = {
+        'image/jpeg': 'jpg',
+        'image/gif': 'gif',
+        'image/png': 'png'
+    }
+    var type = types[file.type];
+    if (!type) {
+        alert('请选择图片！');
+        return;
+    }
+    reader.readAsDataURL(file);
+    reader.onload = function () {
+        edit_item.img = {
+            type: type,
+            data: reader.result.split(',')[1]
+        };
+    }
+}
+
 var app = new Vue({
     el: '#app',
     data: {
@@ -155,6 +224,8 @@ var app = new Vue({
     methods : {
         on_click_edit: on_click_edit,
         on_click_delete: on_click_delete,
+        on_change_new_item_img: on_change_new_item_img,
+        on_change_edit_item_img: on_change_edit_item_img,
         new_item_submit: new_item_submit,
         edit_item_submit: edit_item_submit,
         delete_item_submit: delete_item_submit,

@@ -1,12 +1,21 @@
 {% extends 'layout.html' %}
-{% block title %}浏览商品 | USTC二手市场{% endblock %}
+{% block title %}浏览商品 | 闲蜗{% endblock %}
 {% block body %}
 <div class="row">
     <div class="offset-md-1 col-md-10">
         <form class="form" action="/items" method="get">
             <div class="form-group row">
-                <div class="col-md-10">
-                    <input type="text" class="form-control" name="keywords" placeholder="关键字" required>
+                <div class="col-md-8">
+                    <input type="text" class="form-control" name="keywords" placeholder="关键字">
+                </div>
+                <div class="col-md-2">
+                    <select class="form-control" name="type">
+                        <option value="all">所有种类</option>
+                        <option value="0">书籍</option>
+                        <option value="1">日用品</option>
+                        <option value="2">电子设备</option>
+                        <option value="3">其他</option>
+                    </select>
                 </div>
                 <div class="col-md-2">
                     <button type="submit" class="btn btn-secondary" style="width:100%;">搜索</button>
@@ -16,8 +25,9 @@
         <table class="table">
             <thead>
                 <tr>
-                    <th scope="col" width="15%">商品编号</th>
-                    <th scope="col" width="70%">商品名称</th>
+                    <th scope="col" width="10%">编号</th>
+                    <th scope="col" width="10%">种类</th>
+                    <th scope="col" width="65%">名称</th>
                     <th scope="col" width="15%">价格</th>
                 </tr>
             </thead>
@@ -25,7 +35,8 @@
                 {% for item in items %}
                     <tr>
                         <td>{{ item.id_ }}</td>
-                        <td>{{ item.name }}</td>
+                        <td>{{ ['书籍', '日用品', '电子设备', '其他'][item.type_] }}
+                        <td><a href="/detail/{{ item.id_ }}" target="_blank">{{ item.name }}<a/></td>
                         <td>{{ item.price }} 元</td>
                     </tr>
                 {% endfor %}
@@ -45,5 +56,4 @@
         {% endif %}
     </div>
 </div>
-
 {% endblock %}

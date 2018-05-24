@@ -32,6 +32,8 @@ class Item(Model):
     user = ForeignKeyField(User, related_name='item')
     type_ = IntegerField()
     name = CharField()
+    detail = CharField()
+    img_filename = CharField()
     price = DecimalField()
     has_saled = BooleanField()
     sale_self = BooleanField()

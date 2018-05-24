@@ -1,0 +1,26 @@
+{% extends 'layout.html' %}
+{% block title %}商品详情 | 闲蜗{% endblock %}
+{% block body %}
+<div class="row">
+    <div class="offset-md-1 col-md-10">
+        <dl class="row">
+            <dt class="col-md-3">商品名称</dt>
+            <dd class="col-md-9">{{ item.name }}</dd>
+            <dt class="col-md-3">商品编号</dt>
+            <dd class="col-md-9">{{ item.id_ }}</dd>
+            <dt class="col-md-3">商品状态</dt>
+            <dd class="col-md-9">{% if item.has_saled %}已售出{% else %}销售中{% endif %}</dd>
+            <dt class="col-md-3">卖家编号</dt>
+            <dd class="col-md-9">{% if item.sale_self %}{{ item.user.id_ }}{% else %}由工作人员销售{% endif %}</dd>
+            <dt class="col-md-3">定价</dt>
+            <dd class="col-md-9">{{ item.price }} 元</dd>
+            {% if item.img_filename != '' %}
+                <dt class="col-md-3">图片</dt>
+                <dd class="col-md-9"><img src="/img/{{ item.id_ }}"></dd>
+            {% endif %}
+            <dt class="col-md-3">描述</dt>
+            <dd class="col-md-9">{{ item.detail }}</dd>
+        </dl>
+    </div>
+</div>
+{% endblock %}
