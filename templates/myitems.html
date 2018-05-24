@@ -1,0 +1,233 @@
+{% extends 'layout.html' %}
+{% block title %}我的商品 | USTC二手市场{% endblock %}
+{% block head %}
+<script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
+<script src="static/js/jquery-3.3.1.min.js"></script>
+<script src="static/js/bootstrap.min.js"></script>
+<script>
+    var items = {{ items | safe }};
+</script>
+{% endblock %}
+{% block body %}
+{% raw %}
+<div id="app">
+    <div class="row">
+        <div class="offset-md-1 col-md-10">
+            <div class="card" id="items">
+                <div class="card-header">
+                    <span class="card-title">我的商品</span>
+                    <a href="#" id="new-item" style="float: right;" data-toggle="modal" data-target="#modal-new-item">新增商品</a>
+                </div>
+                <table class="table card-body">
+                    <thead>
+                        <tr>
+                            <th scope="col" style="width: 13.3333%">编号</th>
+                            <th scope="col" style="width: 13.3333%">名称</th>
+                            <th scope="col" style="width: 13.3333%">种类</th>
+                            <th scope="col" style="width: 13.3333%">定价</th>
+                            <th scope="col" style="width: 13.3333%">自己卖</th>
+                            <th scope="col" style="width: 13.3333%">拿回物品</th>
+                            <th scope="col" style="width: 20%">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="item in items">
+                            <td style="width: 13.3333%">{{ item.id }}</td>
+                            <td style="width: 13.3333%">{{ item.name }}</td>
+                            <td style="width: 13.3333%">{{ type_name(item.type) }}</td>
+                            <td style="width: 13.3333%">{{ item.price }}</td>
+                            <td v-if="item.sale_self" style="width: 13.3333%">是</td>
+                            <td v-else style="width: 13.3333%">否</td>
+                            <td v-if="item.will_take_back" style="width: 13.3333%">是</td>
+                            <td v-else style="width: 13.3333%">否</td>
+                            <template v-if="!item.has_saled">
+                                <td v-if="!item.has_given_staff" style="width: 20%">
+                                    <div class="row">
+                                        <div style="margin-left: 10%; width: 30%"><a href="#" v-on:click="on_click_edit(item.id)">编辑</a></div>
+                                        <div style="width: 30%"><a href="#" v-on:click="on_click_delete(item.id)">删除</a></div>
+                                    </div>
+                                </td>
+                                <td v-else style="width: 30%">
+                                    已交由工作人员
+                                </td>
+                            </template>
+                            <td v-else style="width: 30%">
+                                已售出
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="modal-new-item" role="dialog" tabindex="-1" data-backdrop="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <form class="modal-content" v-on:submit.prevent="new_item_submit">
+                <div class="modal-header">
+                    <h5 class="modal-title">新增商品</h5>
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span>&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group row">
+                        <label class="col-md-2 col-form-label">名称</label>
+                        <div class="col-md-10">
+                            <input type="text" v-model="new_item.name" class="form-control" placeholder="名称" required>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-md-2 col-form-label">定价</label>
+                        <div class="col-md-10">
+                            <input type="number" v-model="new_item.price" min="0" max="100000000" step="0.01" class="form-control" placeholder="定价" required>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-md-2 col-form-label">种类</label>
+                        <div class="col-md-10">
+                            <select class="form-control" v-model="new_item.type">
+                                <option value="0">书籍</option>
+                                <option value="1">日用品</option>
+                                <option value="2">电子设备</option>
+                                <option value="3">其他</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="offset-md-2 col-md-10">
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" v-model="new_item.sale_self" value="true" type="radio" id="new-sale-self-yes">
+                                <label class="form-check-label" for="new-sale-self-yes">自己卖</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" v-model="new_item.sale_self" value="false" type="radio" id="new-sale-self-no">
+                                <label class="form-check-label" for="new-sale-self-no">学生会帮忙卖</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="offset-md-2 col-md-10">
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" v-model="new_item.will_take_back" value="true" id="new-take-back-yes">
+                                <label class="form-check-label" for="new-take-back-yes">活动结束后拿回物品</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" v-model="new_item.will_take_back" value="false" id="new-take-back-no">
+                                <label class="form-check-label" for="new-take-back-no">活动结束后不拿回物品</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="offset-md-2 col-md-10">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" v-model="new_item.agree_eula" id="eula">
+                                <label class="form-check-label" for="eula">我已认真阅读并同意<a href="/eula" target="_blank">《二手市场协议书》</a></label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-md-12 alert alert-danger" v-if="new_item.error != ''">
+                            {{ new_item.error }}
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary" :disabled="new_item.disable_button || !new_item.agree_eula">提交</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="modal fade" id="modal-edit-item" role="dialog" tabindex="-1" data-backdrop="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <form class="modal-content" v-on:submit.prevent="edit_item_submit">
+                <div class="modal-header">
+                    <h5 class="modal-title">编辑商品</h5>
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span>&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group row">
+                        <label class="col-md-2 col-form-label">名称</label>
+                        <div class="col-md-10">
+                            <input type="text" v-model="edit_item.name" class="form-control" placeholder="名称" required>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-md-2 col-form-label">定价</label>
+                        <div class="col-md-10">
+                            <input type="number" v-model="edit_item.price" min="0" max="100000000" step="0.01" class="form-control" placeholder="定价" required>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-md-2 col-form-label">种类</label>
+                        <div class="col-md-10">
+                            <select class="form-control" v-model="edit_item.type">
+                                <option value="0">书籍</option>
+                                <option value="1">日用品</option>
+                                <option value="2">电子设备</option>
+                                <option value="3">其他</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="offset-md-2 col-md-10">
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" v-model="edit_item.sale_self" value="true" type="radio" id="edit-sale-self-yes">
+                                <label class="form-check-label" for="edit-sale-self-yes">自己卖</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" v-model="edit_item.sale_self" value="false" type="radio" id="edit-sale-self-no">
+                                <label class="form-check-label" for="edit-sale-self-no">学生会帮忙卖</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="offset-md-2 col-md-10">
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" v-model="edit_item.will_take_back" value="true" id="edit-take-back-yes">
+                                <label class="form-check-label" for="edit-take-back-yes">活动结束后拿回物品</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" v-model="edit_item.will_take_back" value="false" id="edit-take-back-no">
+                                <label class="form-check-label" for="edit-take-back-no">活动结束后不拿回物品</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-md-12 alert alert-danger" v-if="edit_item.error != ''">
+                            {{ edit_item.error }}
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary" :disabled="edit_item.disable_button">提交</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="modal fade" id="modal-delete-item" role="dialog" tabindex="-1" data-backdrop="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">删除商品</h5>
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span>&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div>你确定要删除此商品吗？一旦删除无法撤销。</div>
+                    <div class="alert alert-danger" v-if="delete_item.error != ''">
+                        {{ delete_item.error }}
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" :disabled="delete_item.disable_button" v-on:click="delete_item_submit">确认删除</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="/static/js/items.js"></script>
+{% endraw %}
+{% endblock %}

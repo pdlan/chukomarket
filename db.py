@@ -10,6 +10,7 @@ class User(Model):
     student_id = CharField()
     phone = CharField()
     is_admin = BooleanField()
+    has_registered = BooleanField()
 
     def is_authenticated(self):
         return True

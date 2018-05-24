@@ -1,132 +1,49 @@
 {% extends 'layout.html' %}
-{% block title %}{% endblock %}
-{% block head %}<script src="/static/js/items.js"></script>{% endblock %}
+{% block title %}浏览商品 | USTC二手市场{% endblock %}
 {% block body %}
 <div class="row">
     <div class="offset-md-1 col-md-10">
-        <div class="card" id="items">
-            <div class="card-header">
-                <span class="card-title">我的商品</span>
-                <a href="#" id="new-item" style="float: right;" data-toggle="modal" data-target="#modal-new-item">新增商品</a>
-            </div>
-            <table class="table card-body">
-                <thead>
-                    <tr>
-                        <th scope="col" style="width: 14%">名称</th>
-                        <th scope="col" style="width: 14%">种类</th>
-                        <th scope="col" style="width: 14%">定价</th>
-                        <th scope="col" style="width: 14%">自己卖</th>
-                        <th scope="col" style="width: 14%">拿回物品</th>
-                        <th scope="col" style="width: 30%">操作</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for item in items %}
-                        <tr data-id="{{ item.id }}">
-                            <td style="width: 14%">{{ item.name }}</td>
-                            <td style="width: 14%">{{ item.type_name }}</td>
-                            <td style="width: 14%">{{ item.price }}</td>
-                            {% if item.sale_self %}
-                                <td style="width: 14%">是</td>
-                            {% else %}
-                                <td style="width: 14%">否</td>
-                            {% endif %}
-                            {% if item.will_take_back %}
-                                <td style="width: 14%">是</td>
-                            {% else %}
-                                <td style="width: 14%">否</td>
-                            {% endif %}
-                            {% if not item.has_saled %}
-                                {% if not item.has_given_staff %}
-                                    <td style="width: 30%">
-                                        <div class="row">
-                                            <div style="margin-left: 10%; width: 30%"><a href="#"   class="edit">编辑</a></div>
-                                            <div style="width: 30%"><a href="#" class="delete">删除   </a></div>
-                                        </div>
-                                    </td>
-                                {% else %}
-                                    <td style="width: 30%">
-                                        已交由工作人员
-                                    </td>
-                                {% endif %}
-                            {% else %}
-                                <td style="width: 30%">
-                                    已售出
-                                </td>
-                            {% endif %}
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
-<div class="modal fade" id="modal-new-item" role="dialog" tabindex="-1" data-backdrop="true">
-    <div class="modal-dialog modal-lg" role="document">
-        <form class="modal-content" id="form-new-item">
-            <div class="modal-header">
-                <h5 class="modal-title">新增商品</h5>
-                <button type="button" class="close" data-dismiss="modal">
-                    <span>&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="form-group row">
-                    <label for="name" class="col-md-2 col-form-label">名称</label>
-                    <div class="col-md-10">
-                        <input type="text" name="name" class="form-control" id="new-name" placeholder="名称" required>
-                    </div>
+        <form class="form" action="/items" method="get">
+            <div class="form-group row">
+                <div class="col-md-10">
+                    <input type="text" class="form-control" name="keywords" placeholder="关键字" required>
                 </div>
-                <div class="form-group row">
-                    <label for="price" class="col-md-2 col-form-label">定价</label>
-                    <div class="col-md-10">
-                        <input type="number" name="price" min="0" max="100000000" step="0.01" class="form-control" id="new-price" placeholder="定价" required>
-                    </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-secondary" style="width:100%;">搜索</button>
                 </div>
-                <div class="form-group row">
-                    <label for="type" class="col-md-2 col-form-label">种类</label>
-                    <div class="col-md-10">
-                        <select class="form-control" name="type" id="new-type">
-                            <option value="0">书籍</option>
-                            <option value="1">日用品</option>
-                            <option value="2">电子设备</option>
-                            <option value="3">其他</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <div class="offset-md-2 col-md-10">
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="sale-self" id="new-sale-self-yes" checked>
-                            <label class="form-check-label" for="new-sale-self-yes">自己卖</label>
-                        </div>
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="sale-self" id="new-sale-self-no">
-                            <label class="form-check-label" for="new-sale-self-no">学生会帮忙卖</label>
-                        </div>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <div class="offset-md-2 col-md-10">
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="take-back" id="new-take-back-yes" checked>
-                            <label class="form-check-label" for="new-take-back-yes">活动结束后拿回物品</label>
-                        </div>
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="take-back" id="new-take-back-no">
-                            <label class="form-check-label" for="new-take-back-no">活动结束后不拿回物品</label>
-                        </div>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <div class="col-md-12 alert alert-danger" id="new-error" style="display: none;">
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button id="new-item-submit" type="submit" class="btn btn-primary">提交</button>
             </div>
         </form>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col" width="15%">商品编号</th>
+                    <th scope="col" width="70%">商品名称</th>
+                    <th scope="col" width="15%">价格</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in items %}
+                    <tr>
+                        <td>{{ item.id_ }}</td>
+                        <td>{{ item.name }}</td>
+                        <td>{{ item.price }} 元</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
 </div>
+<div class="row">
+    <div class="offset-md-1 col-md-1">
+        {% if page > 1 %}
+            <a href="/items?page={{ page - 1 }}">上一页</a>
+        {% endif %}
+    </div>
+    <div class="offset-md-8 col-md-1">
+        {% if page < pages %}
+            <a href="/items?page={{ page + 1 }}">下一页</a>
+        {% endif %}
+    </div>
+</div>
+
 {% endblock %}
